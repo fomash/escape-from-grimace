@@ -52,23 +52,31 @@
     background:#111; border-radius:18px; overflow:hidden; box-shadow:var(--shadow);
   }
   .scene .bg{ position:absolute; inset:0; background:radial-gradient(80% 50% at 50% 0%, #1b1b1b 0%, #0c0c0c 60%); }
-  .bars{ position:absolute; inset:6% 10% 22% 10%; border-radius:10px; background:#262626; box-shadow: inset 0 0 0 2px #000; }
-  .bar{ position:absolute; top:0; bottom:0; width:7px; background:#0b0b0b; border-radius:6px; }
-  .bar:nth-child(1){ left:10% } .bar:nth-child(2){ left:24% } .bar:nth-child(3){ left:38% }
-  .bar:nth-child(4){ left:52% } .bar:nth-child(5){ left:66% } .bar:nth-child(6){ left:80% }
 
-  .floor{ position:absolute; left:0; right:0; bottom:0; height:22%; background:linear-gradient(#2a2a2a, #1c1c1c); }
+  /* RENAMED to avoid conflict with .bar (intro progress) */
+  .gate{ position:absolute; inset:6% 10% 22% 10%; border-radius:10px; background:#262626; box-shadow: inset 0 0 0 2px #000; }
+  .gateBar{ position:absolute; top:0; bottom:0; width:7px; background:#0b0b0b; border-radius:6px; }
+  .gateBar:nth-child(1){ left:10% } .gateBar:nth-child(2){ left:24% } .gateBar:nth-child(3){ left:38% }
+  .gateBar:nth-child(4){ left:52% } .gateBar:nth-child(5){ left:66% } .gateBar:nth-child(6){ left:80% }
+
+  .floor{ position:absolute; left:0; right:0; bottom:0; height:22%; background:linear-gradient(#2a2a2a, #1c1c1c); z-index:0; }
+
   .screwdriver{
     position:absolute; left:20%; bottom:14%; width:26%; aspect-ratio:4/1; border-radius:6px;
     background:linear-gradient(90deg,#cfa05b,#d8a25a 40%, #9ea6b1 70%, #cfd6e3);
     box-shadow:0 6px 10px rgba(0,0,0,.35);
-    transform:rotate(-6deg); cursor:pointer;
+    transform:rotate(-6deg); cursor:pointer; z-index:3;
+    outline:0;
   }
   .screwdriver::after{ content:""; position:absolute; right:-6%; top:20%; width:14%; height:60%; background:#8d5b1f; border-radius:4px; }
+  .screwdriverGlow{ position:absolute; inset:-6%; border-radius:10px; box-shadow:0 0 0 0 rgba(255,213,77,.0); pointer-events:none; }
+  @keyframes ping { 0%{ box-shadow:0 0 0 0 rgba(255,213,77,.65) } 100%{ box-shadow:0 0 0 18px rgba(255,213,77,0) } }
+  .screwdriverHint{ position:absolute; left:20%; bottom:14%; transform:translate(-10%,-140%); color:#fff; background:rgba(0,0,0,.45); padding:6px 8px; border-radius:8px; font-weight:700; font-size:.8rem; z-index:4; }
+
   .lock{
     position:absolute; right:14%; bottom:36%; width:22%; aspect-ratio:1/1.2; border-radius:10px;
     background:#5b5b5b; box-shadow: inset 0 -6px 0 rgba(0,0,0,.2), 0 8px 18px rgba(0,0,0,.35);
-    display:flex; align-items:center; justify-content:center; cursor:not-allowed;
+    display:flex; align-items:center; justify-content:center; cursor:not-allowed; z-index:2;
   }
   .lock.ready{ cursor:pointer; outline:3px solid #ffd54d; }
   .lock .keyhole{ width:30%; height:38%; background:#222; border-radius:10px; position:relative; }
@@ -76,14 +84,19 @@
 
   .boy{
     position:absolute; left:10%; bottom:28%; width:22%; aspect-ratio:3/4; border-radius:10px;
-    background:linear-gradient(#ffd9d7,#ffc4c1); box-shadow:0 6px 14px rgba(0,0,0,.35);
+    background:linear-gradient(#ffd9d7,#ffc4c1); box-shadow:0 6px 14px rgba(0,0,0,.35); z-index:2;
+    animation:breathe 2.2s ease-in-out infinite;
   }
+  @keyframes breathe{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-2px) } }
   .boy::after{ content:""; position:absolute; bottom:-6%; left:8%; width:84%; height:10%; border-radius:999px; background:rgba(0,0,0,.45); filter:blur(4px); }
+  /* simple face */
+  .boyHead{ position:absolute; top:-18%; left:22%; width:36%; aspect-ratio:1; background:#ffccbc; border-radius:50%; box-shadow:0 2px 0 rgba(0,0,0,.15) inset; }
+  .eye{ position:absolute; top:38%; width:14%; height:14%; background:#222; border-radius:50%; }
+  .eye.l{ left:24% } .eye.r{ right:24% }
+  .youTag{ position:absolute; top:-26%; left:8%; background:#fff; padding:3px 6px; border-radius:8px; font-size:.7rem; font-weight:800; box-shadow:var(--shadow); }
 
   /* Backpack */
-  .ui{
-    display:flex; align-items:center; justify-content:space-between; margin:10px 0 0;
-  }
+  .ui{ display:flex; align-items:center; justify-content:space-between; margin:10px 0 0; }
   .backpack{
     display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:14px; background:#fff; box-shadow:var(--shadow);
     font-weight:700;
@@ -222,22 +235,32 @@ function startGame(){
 
 /* -------------------------
    LEVEL 01: Escape the Cage
-   - Pick screwdriver
-   - Then tap lock to start lockpick mini-game
-   - Tap fast to 30 while decay pulls back progress
 --------------------------*/
 function levelSceneHtml(){
   return `
   <div class="scene" id="scene" aria-label="Level 01: Escape the Cage">
     <div class="bg"></div>
-    <div class="bars" aria-hidden="true">
-      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-    </div>
-    <div class="boy" title="You"></div>
-    <div class="lock" id="lock" title="Cage Lock"><div class="keyhole"></div></div>
-    <div class="screwdriver" id="screwdriver" title="Screwdriver"></div>
+
+    <!-- Put floor FIRST so other items can sit above it -->
     <div class="floor"></div>
+
+    <div class="gate" aria-hidden="true">
+      <div class="gateBar"></div><div class="gateBar"></div><div class="gateBar"></div>
+      <div class="gateBar"></div><div class="gateBar"></div><div class="gateBar"></div>
+    </div>
+
+    <div class="boy" title="You">
+      <div class="boyHead"></div>
+      <div class="eye l"></div><div class="eye r"></div>
+      <div class="youTag">You</div>
+    </div>
+
+    <div class="screwdriver" id="screwdriver" title="Screwdriver">
+      <div class="screwdriverGlow" style="animation: ping 1.4s infinite;"></div>
+    </div>
+    <div class="screwdriverHint">Tap to pick</div>
+
+    <div class="lock" id="lock" title="Cage Lock"><div class="keyhole"></div></div>
 
     <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Lockpick">
       <div class="modal">
@@ -258,7 +281,7 @@ const game = {
   state: 'explore', // 'explore' | 'lockpick' | 'won'
   progress: 0,
   target: 30,
-  decayPerSecond: 3.6, // how fast progress decays when not tapping
+  decayPerSecond: 3.6,
   lastTick: 0,
   raf: null
 };
@@ -266,6 +289,7 @@ const game = {
 function setupLevel01(){
   const lock = document.getElementById('lock');
   const screwdriver = document.getElementById('screwdriver');
+  const screwdriverHint = document.querySelector('.screwdriverHint');
   const overlay = document.getElementById('overlay');
   const tapZone = document.getElementById('tapZone');
   const fill = document.getElementById('meterFill');
@@ -274,14 +298,12 @@ function setupLevel01(){
 
   toast("Pick up the screwdriver.");
 
-  screwdriver.addEventListener('click', pickup);
-  screwdriver.addEventListener('touchstart', pickup, {passive:true});
-
   function pickup(e){
     e.preventDefault?.();
     if (game.inventory.has('screwdriver')) return;
     game.inventory.add('screwdriver');
     renderBackpack();
+    screwdriverHint.remove();
     screwdriver.style.transition = 'transform .25s ease, opacity .25s ease';
     screwdriver.style.transform = 'translateY(8px) scale(.9)';
     screwdriver.style.opacity = '0';
@@ -290,9 +312,8 @@ function setupLevel01(){
     lock.style.cursor = 'pointer';
     toast("Tap the lock to use the screwdriver.");
   }
-
-  lock.addEventListener('click', tryLockpick);
-  lock.addEventListener('touchstart', tryLockpick, {passive:true});
+  screwdriver.addEventListener('click', pickup);
+  screwdriver.addEventListener('touchstart', pickup, {passive:true});
 
   function tryLockpick(e){
     e.preventDefault?.();
@@ -300,11 +321,13 @@ function setupLevel01(){
     if (game.state === 'won') return;
     openLockpick();
   }
+  lock.addEventListener('click', tryLockpick);
+  lock.addEventListener('touchstart', tryLockpick, {passive:true});
 
   function openLockpick(){
     overlay.classList.add('open');
     game.state = 'lockpick';
-    game.progress = Math.max(0, Math.floor(game.progress)); // snap
+    game.progress = Math.max(0, Math.floor(game.progress));
     fill.style.width = pct(game.progress, game.target);
     game.lastTick = performance.now();
     loop();
@@ -314,10 +337,9 @@ function setupLevel01(){
     if (game.state !== 'lockpick') return;
     game.raf = requestAnimationFrame(loop);
     const t = now ?? performance.now();
-    const dt = Math.min(0.2, (t - game.lastTick)/1000); // clamp dt to avoid huge jumps
+    const dt = Math.min(0.2, (t - game.lastTick)/1000);
     game.lastTick = t;
 
-    // continuous decay while the modal is open
     game.progress = Math.max(0, game.progress - game.decayPerSecond * dt);
     fill.style.width = pct(game.progress, game.target);
 
@@ -328,12 +350,13 @@ function setupLevel01(){
 
   function handleTap(e){
     e.preventDefault?.();
-    // each tap adds 1. Feel free to tune to 1.2 if too hard.
     game.progress = Math.min(game.target, game.progress + 1);
     fill.style.width = pct(game.progress, game.target);
     tapZone.animate([{transform:'scale(1)'},{transform:'scale(0.96)'},{transform:'scale(1)'}], {duration:120});
     if (game.progress >= game.target){ win(); }
   }
+  tapZone.addEventListener('click', handleTap);
+  tapZone.addEventListener('touchstart', handleTap, {passive:false});
 
   function win(){
     cancelAnimationFrame(game.raf);
@@ -344,11 +367,8 @@ function setupLevel01(){
     lock.innerHTML = '<div style="font-weight:900;">OPEN</div>';
     successMsg.classList.add('show');
     toast("Door open! You escaped.");
-    // Here you can trigger Level 02 load.
+    // -> Load Level 02 here.
   }
-
-  tapZone.addEventListener('click', handleTap);
-  tapZone.addEventListener('touchstart', handleTap, {passive:false}); // need preventDefault for fast taps
 
   cancelBtn.addEventListener('click', ()=>{
     cancelAnimationFrame(game.raf);
@@ -356,11 +376,9 @@ function setupLevel01(){
     game.state = 'explore';
   });
 
-  // Utility helpers
-  function pct(val, max){ return (100 * val / max).toFixed(1) + '%'; }
-  function bounce(el){
-    el.animate([{transform:'translateY(0)'},{transform:'translateY(-2px)'},{transform:'translateY(0)'}], {duration:140});
-  }
+  // helpers
+  function pct(v,m){ return (100*v/m).toFixed(1)+'%'; }
+  function bounce(el){ el.animate([{transform:'translateY(0)'},{transform:'translateY(-2px)'},{transform:'translateY(0)'}], {duration:140}); }
 }
 
 /* Backpack rendering */
@@ -373,7 +391,7 @@ function renderBackpack(){
   }
 }
 
-/* Tiny toast (centered under brand) */
+/* Tiny toast */
 let toastEl;
 function toast(msg){
   if (!toastEl){
@@ -382,7 +400,6 @@ function toast(msg){
   toastEl.textContent = msg;
   toastEl.style.opacity = '0';
   toastEl.animate([{opacity:0, transform:'translateY(-6px)'},{opacity:.95, transform:'translateY(0)'}], {duration:180, fill:'forwards'});
-  // auto fade
   setTimeout(()=> toastEl.animate([{opacity:.95},{opacity:0}], {duration:350, fill:'forwards'}), 2000);
 }
 
