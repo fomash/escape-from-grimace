@@ -3,97 +3,147 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Grim Castle — Intro</title>
+<title>Grim Castle — Level 01</title>
 <style>
   :root{
-    --brand-yellow:#ffd32a; /* McD-like vibe, not exact */
-    --brand-red:#e53935;
-    --brand-purple:#7a3bd1; /* shake color */
-    --ink:#111;
-    --bg:#fff8e6;
+    --brand-yellow:#ffd32a; --brand-red:#e53935; --brand-purple:#7a3bd1;
+    --ink:#111; --bg:#fff8e6; --panel:#ffffff; --shadow:0 10px 30px rgba(0,0,0,.08);
+    --green:#2eb85c;
   }
   html,body{height:100%}
   body{
-    margin:0;
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Helvetica Neue", sans-serif;
-    background: radial-gradient(120% 120% at 50% 0%, var(--bg) 0%, #fff 60%);
-    color:var(--ink);
+    margin:0; background: radial-gradient(120% 120% at 50% 0%, var(--bg) 0%, #fff 60%);
+    color:var(--ink); font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,"Helvetica Neue",sans-serif;
     -webkit-font-smoothing:antialiased;
+    touch-action: manipulation;
   }
-  .app{
-    min-height:100%;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .frame{
-    width:100%; max-width:560px; min-height:100dvh;
-    display:flex; flex-direction:column; align-items:center; justify-content:space-between;
-    padding:16px 14px 24px;
-    box-sizing:border-box;
-  }
-  .brand{
-    font-weight:800; letter-spacing:.3px;
-    display:flex; gap:8px; align-items:center;
-  }
-  .brand .mark{
-    width:26px; height:26px; border-radius:8px;
-    background:
-      linear-gradient(180deg, var(--brand-yellow), #ffc400);
-    box-shadow:0 2px 0 rgba(0,0,0,.08) inset, 0 1px 4px rgba(0,0,0,.08);
-    position:relative; overflow:hidden;
-  }
-  .brand .mark::after{
-    content:""; position:absolute; inset:4px;
-    border-radius:6px; background:var(--brand-red); transform:skewX(-10deg);
-    mask: radial-gradient(8px 8px at 50% 85%, transparent 8px, #000 8px);
-  }
-  .panel{
-    flex:1; width:100%; display:flex; align-items:center; justify-content:center;
-    position:relative; text-align:center; padding:10px;
-  }
+  .app{ min-height:100%; display:flex; align-items:center; justify-content:center; }
+  .frame{ width:100%; max-width:560px; min-height:100dvh; display:flex; flex-direction:column; padding:16px 14px 24px; box-sizing:border-box; }
+
+  /* Top bar / brand / HUD */
+  .brand{ font-weight:800; letter-spacing:.3px; display:flex; gap:8px; align-items:center; }
+  .brand .mark{ width:26px; height:26px; border-radius:8px; background:linear-gradient(180deg,var(--brand-yellow),#ffc400); box-shadow:0 2px 0 rgba(0,0,0,.08) inset, 0 1px 4px rgba(0,0,0,.08); position:relative; overflow:hidden; }
+  .brand .mark::after{ content:""; position:absolute; inset:4px; border-radius:6px; background:var(--brand-red); transform:skewX(-10deg); mask: radial-gradient(8px 8px at 50% 85%, transparent 8px, #000 8px); }
+  .hud{ display:flex; align-items:center; justify-content:space-between; }
+
+  /* Intro card */
+  .panel{ flex:1; display:flex; align-items:center; justify-content:center; position:relative; }
   .card{
-    width:100%; border-radius:18px; padding:22px 18px;
-    background:#fff; box-shadow:0 10px 30px rgba(0,0,0,.08);
-    display:flex; flex-direction:column; align-items:center; gap:14px;
+    width:100%; border-radius:18px; padding:22px 18px; background:var(--panel); box-shadow:var(--shadow);
+    display:flex; flex-direction:column; align-items:center; gap:14px; text-align:center;
     transform:translateY(10px); opacity:0; animation:pop .45s ease forwards;
   }
   .art{ width:110px; height:110px; }
-  .line{
-    font-size:1.15rem; line-height:1.35; font-weight:650;
-  }
+  .line{ font-size:1.15rem; line-height:1.35; font-weight:650; }
   .hint{ font-size:.9rem; opacity:.7 }
-  .controls{
-    display:flex; width:100%; justify-content:space-between; gap:10px; margin-top:8px;
-  }
-  button{
-    appearance:none; border:none; border-radius:14px; padding:14px 16px;
-    font-weight:750; font-size:1rem; cursor:pointer;
-    box-shadow:0 6px 16px rgba(0,0,0,.09);
-  }
+  .controls{ display:flex; width:100%; justify-content:space-between; gap:10px; margin-top:8px; }
+  button{ appearance:none; border:none; border-radius:14px; padding:14px 16px; font-weight:750; font-size:1rem; cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,.09); }
   .ghost{ background:transparent; border:2px solid rgba(0,0,0,.1) }
-  .primary{
-    background:linear-gradient(180deg, var(--brand-yellow), #ffc400);
-  }
-  .progress{
-    height:6px; width:100%; background:rgba(0,0,0,.06);
-    border-radius:999px; overflow:hidden; margin:10px 0 0;
-  }
-  .bar{ height:100%; width:0%; background:var(--brand-red); transition:width .25s ease }
+  .primary{ background:linear-gradient(180deg, var(--brand-yellow), #ffc400); }
 
+  .progress{ height:6px; width:100%; background:rgba(0,0,0,.06); border-radius:999px; overflow:hidden; margin:10px 0 0; }
+  .bar{ height:100%; width:0%; background:var(--brand-red); transition:width .25s ease }
   @keyframes pop{ from{ transform:translateY(8px) scale(.98); opacity:0 } to{ transform:translateY(0) scale(1); opacity:1 } }
-  @media (prefers-reduced-motion: reduce){
-    .card{ animation:none; opacity:1; transform:none }
-    .bar{ transition:none }
+  @media (prefers-reduced-motion: reduce){ .card{ animation:none; opacity:1; transform:none } .bar{ transition:none } }
+
+  /* Level canvas */
+  .scene{
+    position:relative; width:100%; aspect-ratio:9/16; max-height:calc(100dvh - 140px);
+    background:#111; border-radius:18px; overflow:hidden; box-shadow:var(--shadow);
   }
+  .scene .bg{ position:absolute; inset:0; background:radial-gradient(80% 50% at 50% 0%, #1b1b1b 0%, #0c0c0c 60%); }
+  .bars{ position:absolute; inset:6% 10% 22% 10%; border-radius:10px; background:#262626; box-shadow: inset 0 0 0 2px #000; }
+  .bar{ position:absolute; top:0; bottom:0; width:7px; background:#0b0b0b; border-radius:6px; }
+  .bar:nth-child(1){ left:10% } .bar:nth-child(2){ left:24% } .bar:nth-child(3){ left:38% }
+  .bar:nth-child(4){ left:52% } .bar:nth-child(5){ left:66% } .bar:nth-child(6){ left:80% }
+
+  .floor{ position:absolute; left:0; right:0; bottom:0; height:22%; background:linear-gradient(#2a2a2a, #1c1c1c); }
+  .screwdriver{
+    position:absolute; left:20%; bottom:14%; width:26%; aspect-ratio:4/1; border-radius:6px;
+    background:linear-gradient(90deg,#cfa05b,#d8a25a 40%, #9ea6b1 70%, #cfd6e3);
+    box-shadow:0 6px 10px rgba(0,0,0,.35);
+    transform:rotate(-6deg); cursor:pointer;
+  }
+  .screwdriver::after{ content:""; position:absolute; right:-6%; top:20%; width:14%; height:60%; background:#8d5b1f; border-radius:4px; }
+  .lock{
+    position:absolute; right:14%; bottom:36%; width:22%; aspect-ratio:1/1.2; border-radius:10px;
+    background:#5b5b5b; box-shadow: inset 0 -6px 0 rgba(0,0,0,.2), 0 8px 18px rgba(0,0,0,.35);
+    display:flex; align-items:center; justify-content:center; cursor:not-allowed;
+  }
+  .lock.ready{ cursor:pointer; outline:3px solid #ffd54d; }
+  .lock .keyhole{ width:30%; height:38%; background:#222; border-radius:10px; position:relative; }
+  .lock .keyhole::before{ content:""; position:absolute; left:50%; top:-28%; width:75%; height:55%; transform:translateX(-50%); border-radius:999px; border:6px solid #222; background:transparent; }
+
+  .boy{
+    position:absolute; left:10%; bottom:28%; width:22%; aspect-ratio:3/4; border-radius:10px;
+    background:linear-gradient(#ffd9d7,#ffc4c1); box-shadow:0 6px 14px rgba(0,0,0,.35);
+  }
+  .boy::after{ content:""; position:absolute; bottom:-6%; left:8%; width:84%; height:10%; border-radius:999px; background:rgba(0,0,0,.45); filter:blur(4px); }
+
+  /* Backpack */
+  .ui{
+    display:flex; align-items:center; justify-content:space-between; margin:10px 0 0;
+  }
+  .backpack{
+    display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:14px; background:#fff; box-shadow:var(--shadow);
+    font-weight:700;
+  }
+  .bpicon{ width:22px; height:22px; border-radius:6px; background:linear-gradient(180deg,#ffd54d,#ffb300); position:relative; }
+  .bpicon::after{ content:""; position:absolute; inset:3px; border-radius:4px; background:var(--brand-red,.red); opacity:.9 }
+  .bpitems{ display:flex; gap:6px; margin-left:6px; }
+  .bpitem{
+    width:22px; height:10px; border-radius:4px; background:linear-gradient(90deg,#cfa05b,#d8a25a 40%, #9ea6b1 70%, #cfd6e3); box-shadow:0 1px 3px rgba(0,0,0,.15);
+  }
+
+  .toast{
+    margin-left:auto; margin-right:auto; padding:10px 12px; background:#fff; border-radius:14px; box-shadow:var(--shadow);
+    font-weight:600; font-size:.95rem; opacity:.95;
+  }
+
+  /* Lockpick modal */
+  .overlay{ position:absolute; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; }
+  .overlay.open{ display:flex; }
+  .modal{
+    width:min(520px,92vw); border-radius:18px; background:#fff; box-shadow:0 20px 50px rgba(0,0,0,.4);
+    padding:20px; display:flex; flex-direction:column; gap:12px; text-align:center;
+    animation:pop .25s ease forwards;
+  }
+  .meter{ height:14px; width:100%; border-radius:12px; background:#eee; overflow:hidden; box-shadow:inset 0 1px 3px rgba(0,0,0,.1); }
+  .meter .fill{ height:100%; width:0%; background:linear-gradient(90deg,var(--brand-red),#ff6f00); transition:width .08s linear; }
+  .tapzone{
+    user-select:none; -webkit-user-select:none;
+    touch-action: manipulation;
+    display:flex; align-items:center; justify-content:center; height:180px; border-radius:16px; background:#fff6e2; box-shadow:inset 0 0 0 3px #ffe08a;
+    font-weight:900; font-size:1.2rem;
+  }
+  .ok{ background:linear-gradient(180deg,#58d68d,#2eb85c); color:#fff; }
+  .success{
+    position:absolute; inset:0; display:none; align-items:center; justify-content:center; color:#fff; font-weight:900; font-size:1.3rem;
+  }
+  .success.show{ display:flex; background:rgba(46,184,92,.9); }
+
+  .controls { z-index:1 } /* keep intro buttons on top only during intro */
 </style>
 </head>
 <body>
 <div class="app">
-  <div class="frame" role="dialog" aria-label="Game intro">
-    <div class="brand" aria-hidden="true">
-      <div class="mark"></div><div>MONDOBITES</div>
+  <div class="frame" role="dialog" aria-label="Game">
+    <!-- Top / Brand -->
+    <div class="hud">
+      <div class="brand" aria-hidden="true">
+        <div class="mark"></div><div>MONDOBITES</div>
+      </div>
+      <!-- Backpack HUD appears after intro -->
+      <div class="backpack" id="backpack" style="display:none" aria-label="Backpack">
+        <div class="bpicon"></div>
+        <div>Bag</div>
+        <div class="bpitems" id="bpItems"></div>
+      </div>
     </div>
 
-    <div class="panel">
+    <!-- Panel hosts either Intro or Level Scene -->
+    <div class="panel" id="panel">
+      <!-- INTRO CARD -->
       <div class="card" id="card">
         <svg class="art" viewBox="0 0 120 120" id="art" aria-hidden="true"></svg>
         <div class="line" id="line">…</div>
@@ -102,7 +152,8 @@
       </div>
     </div>
 
-    <div class="controls">
+    <!-- Intro controls -->
+    <div class="controls" id="introControls">
       <button class="ghost" id="skipBtn" aria-label="Skip intro">Skip</button>
       <button class="primary" id="nextBtn" aria-label="Next">Next</button>
     </div>
@@ -110,100 +161,239 @@
 </div>
 
 <script>
-/* Minimal, slide-based storyboard for the intro */
+/* -------------------------
+   INTRO: slides & flow
+--------------------------*/
+const $panel = document.getElementById('panel');
 const $art = document.getElementById('art');
 const $line = document.getElementById('line');
 const $bar = document.getElementById('bar');
 const $next = document.getElementById('nextBtn');
 const $skip = document.getElementById('skipBtn');
 const $card = document.getElementById('card');
+const $introControls = document.getElementById('introControls');
+const $backpack = document.getElementById('backpack');
+const $bpItems = document.getElementById('bpItems');
 
 const slides = [
-  {
-    text: "A little boy visits the world-famous burger place.",
-    svg: burgerShop()
-  },
-  {
-    text: "He buys a purple shake. Looks… legendary.",
-    svg: shakeCup()
-  },
-  {
-    text: "A few sips later—dizzy. He hurries home and crashes on the sofa.",
-    svg: sofaNap()
-  },
-  {
-    text: "He wakes up… in a cage under a strange castle.",
-    svg: cageCastle()
-  },
-  {
-    text: "Something glints on the floor. A screwdriver.",
-    svg: screwdriver()
-  },
-  {
-    text: "Escape starts now.",
-    svg: startLock(),
-    cta: "Start Game"
-  }
+  { text:"A little boy visits the world-famous burger place.", svg: burgerShop() },
+  { text:"He buys a purple shake. Looks… legendary.", svg: shakeCup() },
+  { text:"A few sips later—dizzy. He hurries home and crashes on the sofa.", svg: sofaNap() },
+  { text:"He wakes up… in a cage under a strange castle.", svg: cageCastle() },
+  { text:"Something glints on the floor. A screwdriver.", svg: screwdriverSvg() },
+  { text:"Escape starts now.", svg: startLock(), cta:"Start Game" }
 ];
 
-let i = 0;
-render(i);
+let slideIndex = 0;
+renderSlide(slideIndex);
 
-function render(idx){
+$next.addEventListener('click', nextSlide);
+$skip.addEventListener('click', skipIntro);
+document.addEventListener('keydown', e=>{
+  if (e.key === 'Enter' || e.key === ' ') nextSlide();
+  if (e.key === 'Escape') skipIntro();
+});
+$card.addEventListener('click', (e)=>{
+  if (e.target.tagName.toLowerCase() === 'button') return;
+  nextSlide();
+});
+
+function renderSlide(idx){
   const s = slides[idx];
   $art.innerHTML = s.svg;
   $line.textContent = s.text;
   $bar.style.width = ((idx+1)/slides.length*100).toFixed(1) + '%';
   $next.textContent = s.cta || "Next";
-  // gentle re-pop animation
-  $card.style.animation = 'none';
-  void $card.offsetWidth; // reflow
-  $card.style.animation = '';
+  // re-pop anim
+  $card.style.animation = 'none'; void $card.offsetWidth; $card.style.animation = '';
+}
+function nextSlide(){
+  if (slideIndex < slides.length - 1){ slideIndex++; renderSlide(slideIndex); }
+  else { startGame(); }
+}
+function skipIntro(){ slideIndex = slides.length - 1; renderSlide(slideIndex); }
+function startGame(){
+  // Swap panel to scene
+  $introControls.remove();
+  $panel.innerHTML = levelSceneHtml();
+  $backpack.style.display = 'flex';
+  setupLevel01();
 }
 
-function next(){
-  if (i < slides.length - 1){
-    i++; render(i);
-  } else {
-    startGame();
+/* -------------------------
+   LEVEL 01: Escape the Cage
+   - Pick screwdriver
+   - Then tap lock to start lockpick mini-game
+   - Tap fast to 30 while decay pulls back progress
+--------------------------*/
+function levelSceneHtml(){
+  return `
+  <div class="scene" id="scene" aria-label="Level 01: Escape the Cage">
+    <div class="bg"></div>
+    <div class="bars" aria-hidden="true">
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    </div>
+    <div class="boy" title="You"></div>
+    <div class="lock" id="lock" title="Cage Lock"><div class="keyhole"></div></div>
+    <div class="screwdriver" id="screwdriver" title="Screwdriver"></div>
+    <div class="floor"></div>
+
+    <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Lockpick">
+      <div class="modal">
+        <div style="font-weight:900; font-size:1.1rem;">Unlock the cage!</div>
+        <div style="opacity:.75">Tap fast. Slow taps are erased.</div>
+        <div class="meter"><div class="fill" id="meterFill"></div></div>
+        <div class="tapzone" id="tapZone">TAP! TAP! TAP!</div>
+        <button class="ghost" id="cancelPick">Cancel</button>
+      </div>
+    </div>
+
+    <div class="success" id="successMsg">Unlocked! Level Complete 🎉</div>
+  </div>`;
+}
+
+const game = {
+  inventory: new Set(),
+  state: 'explore', // 'explore' | 'lockpick' | 'won'
+  progress: 0,
+  target: 30,
+  decayPerSecond: 3.6, // how fast progress decays when not tapping
+  lastTick: 0,
+  raf: null
+};
+
+function setupLevel01(){
+  const lock = document.getElementById('lock');
+  const screwdriver = document.getElementById('screwdriver');
+  const overlay = document.getElementById('overlay');
+  const tapZone = document.getElementById('tapZone');
+  const fill = document.getElementById('meterFill');
+  const cancelBtn = document.getElementById('cancelPick');
+  const successMsg = document.getElementById('successMsg');
+
+  toast("Pick up the screwdriver.");
+
+  screwdriver.addEventListener('click', pickup);
+  screwdriver.addEventListener('touchstart', pickup, {passive:true});
+
+  function pickup(e){
+    e.preventDefault?.();
+    if (game.inventory.has('screwdriver')) return;
+    game.inventory.add('screwdriver');
+    renderBackpack();
+    screwdriver.style.transition = 'transform .25s ease, opacity .25s ease';
+    screwdriver.style.transform = 'translateY(8px) scale(.9)';
+    screwdriver.style.opacity = '0';
+    setTimeout(()=> screwdriver.remove(), 260);
+    lock.classList.add('ready');
+    lock.style.cursor = 'pointer';
+    toast("Tap the lock to use the screwdriver.");
+  }
+
+  lock.addEventListener('click', tryLockpick);
+  lock.addEventListener('touchstart', tryLockpick, {passive:true});
+
+  function tryLockpick(e){
+    e.preventDefault?.();
+    if (!game.inventory.has('screwdriver')) { bounce(lock); toast("You need a tool…"); return; }
+    if (game.state === 'won') return;
+    openLockpick();
+  }
+
+  function openLockpick(){
+    overlay.classList.add('open');
+    game.state = 'lockpick';
+    game.progress = Math.max(0, Math.floor(game.progress)); // snap
+    fill.style.width = pct(game.progress, game.target);
+    game.lastTick = performance.now();
+    loop();
+  }
+
+  function loop(now){
+    if (game.state !== 'lockpick') return;
+    game.raf = requestAnimationFrame(loop);
+    const t = now ?? performance.now();
+    const dt = Math.min(0.2, (t - game.lastTick)/1000); // clamp dt to avoid huge jumps
+    game.lastTick = t;
+
+    // continuous decay while the modal is open
+    game.progress = Math.max(0, game.progress - game.decayPerSecond * dt);
+    fill.style.width = pct(game.progress, game.target);
+
+    if (game.progress >= game.target){
+      win();
+    }
+  }
+
+  function handleTap(e){
+    e.preventDefault?.();
+    // each tap adds 1. Feel free to tune to 1.2 if too hard.
+    game.progress = Math.min(game.target, game.progress + 1);
+    fill.style.width = pct(game.progress, game.target);
+    tapZone.animate([{transform:'scale(1)'},{transform:'scale(0.96)'},{transform:'scale(1)'}], {duration:120});
+    if (game.progress >= game.target){ win(); }
+  }
+
+  function win(){
+    cancelAnimationFrame(game.raf);
+    game.state = 'won';
+    overlay.classList.remove('open');
+    lock.classList.remove('ready');
+    lock.classList.add('ok');
+    lock.innerHTML = '<div style="font-weight:900;">OPEN</div>';
+    successMsg.classList.add('show');
+    toast("Door open! You escaped.");
+    // Here you can trigger Level 02 load.
+  }
+
+  tapZone.addEventListener('click', handleTap);
+  tapZone.addEventListener('touchstart', handleTap, {passive:false}); // need preventDefault for fast taps
+
+  cancelBtn.addEventListener('click', ()=>{
+    cancelAnimationFrame(game.raf);
+    overlay.classList.remove('open');
+    game.state = 'explore';
+  });
+
+  // Utility helpers
+  function pct(val, max){ return (100 * val / max).toFixed(1) + '%'; }
+  function bounce(el){
+    el.animate([{transform:'translateY(0)'},{transform:'translateY(-2px)'},{transform:'translateY(0)'}], {duration:140});
   }
 }
 
-function skip(){ i = slides.length - 1; render(i); }
-
-function startGame(){
-  // Replace with your real game bootstrapping
-  // For now we just emit a custom event.
-  document.dispatchEvent(new CustomEvent('game:start'));
-  // Optionally hide intro:
-  document.querySelector('.frame').innerHTML = `
-    <div style="display:flex;min-height:100dvh;align-items:center;justify-content:center;flex-direction:column;gap:14px;">
-      <div style="font-weight:800;font-size:1.3rem;">Game is starting…</div>
-      <div style="opacity:.7">Hook this to your engine init.</div>
-    </div>`;
+/* Backpack rendering */
+function renderBackpack(){
+  $bpItems.innerHTML = '';
+  for (const item of game.inventory){
+    if (item === 'screwdriver'){
+      const el = document.createElement('div'); el.className='bpitem'; el.title='Screwdriver'; $bpItems.appendChild(el);
+    }
+  }
 }
 
-// tap-friendly
-$next.addEventListener('click', next);
-$skip.addEventListener('click', skip);
-document.addEventListener('keydown', (e)=>{
-  if (e.key === 'Enter' || e.key === ' ') next();
-  if (e.key === 'Escape') skip();
-});
-// allow tapping the card to continue
-$card.addEventListener('click', (e)=>{
-  // ignore button clicks inside
-  if (e.target.tagName.toLowerCase() === 'button') return;
-  next();
-});
+/* Tiny toast (centered under brand) */
+let toastEl;
+function toast(msg){
+  if (!toastEl){
+    toastEl = document.createElement('div'); toastEl.className='toast'; document.querySelector('.frame').insertBefore(toastEl, document.querySelector('.panel'));
+  }
+  toastEl.textContent = msg;
+  toastEl.style.opacity = '0';
+  toastEl.animate([{opacity:0, transform:'translateY(-6px)'},{opacity:.95, transform:'translateY(0)'}], {duration:180, fill:'forwards'});
+  // auto fade
+  setTimeout(()=> toastEl.animate([{opacity:.95},{opacity:0}], {duration:350, fill:'forwards'}), 2000);
+}
 
-/* --- Tiny inline SVG makers (no assets needed) --- */
+/* -------------------------
+   SVG makers for Intro
+--------------------------*/
 function burgerShop(){
   return `
   <defs>
     <linearGradient id="sun" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="var(--brand-yellow)"/>
-      <stop offset="100%" stop-color="#ffc400"/>
+      <stop offset="0%" stop-color="var(--brand-yellow)"/><stop offset="100%" stop-color="#ffc400"/>
     </linearGradient>
   </defs>
   <rect x="8" y="50" width="104" height="54" rx="10" fill="var(--brand-red)"/>
@@ -218,13 +408,12 @@ function shakeCup(){
   return `
   <defs>
     <linearGradient id="shake" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#9b6cf0"/>
-      <stop offset="100%" stop-color="var(--brand-purple)"/>
+      <stop offset="0%" stop-color="#9b6cf0"/><stop offset="100%" stop-color="var(--brand-purple)"/>
     </linearGradient>
   </defs>
   <rect x="46" y="18" width="28" height="10" rx="2" fill="#ccc"/>
   <rect x="58" y="10" width="4" height="20" rx="2" fill="#bbb"/>
-  <path d="M40 30h40l-8 60H48L40 30z" fill="url(#shake)" stroke="#5a2bb0" stroke-width="2" />
+  <path d="M40 30h40l-8 60H48L40 30z" fill="url(#shake)" stroke="#5a2bb0" stroke-width="2"/>
   <rect x="36" y="26" width="48" height="8" rx="3" fill="#fff"/>
   <circle cx="60" cy="72" r="10" fill="rgba(255,255,255,.18)"/>`;
 }
@@ -248,7 +437,7 @@ function cageCastle(){
   <rect x="50" y="56" width="20" height="12" rx="3" fill="#666"/>
   <circle cx="60" cy="62" r="2" fill="#222"/>`;
 }
-function screwdriver(){
+function screwdriverSvg(){
   return `
   <rect x="20" y="78" width="80" height="6" rx="3" fill="#d8a25a"/>
   <rect x="86" y="76" width="10" height="10" rx="2" fill="#8d5b1f"/>
@@ -261,11 +450,6 @@ function startLock(){
   <rect x="52" y="64" width="16" height="16" rx="3" fill="#333"/>
   <path d="M48 62v-8a12 12 0 0124 0v8" stroke="#333" stroke-width="6" fill="none" stroke-linecap="round"/>`;
 }
-
-/* Optional: expose the start hook */
-document.addEventListener('game:start', ()=> {
-  // console.log('Intro finished. Boot your game here.');
-});
 </script>
 </body>
 </html>
