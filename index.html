@@ -20,7 +20,7 @@
   .app{ min-height:100%; display:flex; align-items:center; justify-content:center; }
   .frame{ width:100%; max-width:560px; min-height:100dvh; display:flex; flex-direction:column; padding:16px 14px 24px; box-sizing:border-box; }
 
-  /* Top bar / brand / HUD */
+  /* Top / brand */
   .brand{ font-weight:800; letter-spacing:.3px; display:flex; gap:8px; align-items:center; }
   .brand .mark{ width:26px; height:26px; border-radius:8px; background:linear-gradient(180deg,var(--brand-yellow),#ffc400); box-shadow:0 2px 0 rgba(0,0,0,.08) inset, 0 1px 4px rgba(0,0,0,.08); position:relative; overflow:hidden; }
   .brand .mark::after{ content:""; position:absolute; inset:4px; border-radius:6px; background:var(--brand-red); transform:skewX(-10deg); mask: radial-gradient(8px 8px at 50% 85%, transparent 8px, #000 8px); }
@@ -53,11 +53,12 @@
   }
   .scene .bg{ position:absolute; inset:0; background:radial-gradient(80% 50% at 50% 0%, #1b1b1b 0%, #0c0c0c 60%); }
 
-  /* RENAMED to avoid conflict with .bar (intro progress) */
-  .gate{ position:absolute; inset:6% 10% 22% 10%; border-radius:10px; background:#262626; box-shadow: inset 0 0 0 2px #000; }
+  .gate{ position:absolute; inset:6% 10% 22% 10%; border-radius:10px; background:#262626; box-shadow: inset 0 0 0 2px #000; z-index:1; }
   .gateBar{ position:absolute; top:0; bottom:0; width:7px; background:#0b0b0b; border-radius:6px; }
   .gateBar:nth-child(1){ left:10% } .gateBar:nth-child(2){ left:24% } .gateBar:nth-child(3){ left:38% }
   .gateBar:nth-child(4){ left:52% } .gateBar:nth-child(5){ left:66% } .gateBar:nth-child(6){ left:80% }
+  .gate.open { animation: gateFade .6s ease forwards; }
+  @keyframes gateFade { to { opacity:0; transform:translateY(6px); } }
 
   .floor{ position:absolute; left:0; right:0; bottom:0; height:22%; background:linear-gradient(#2a2a2a, #1c1c1c); z-index:0; }
 
@@ -66,11 +67,8 @@
     background:linear-gradient(90deg,#cfa05b,#d8a25a 40%, #9ea6b1 70%, #cfd6e3);
     box-shadow:0 6px 10px rgba(0,0,0,.35);
     transform:rotate(-6deg); cursor:pointer; z-index:3;
-    outline:0;
   }
   .screwdriver::after{ content:""; position:absolute; right:-6%; top:20%; width:14%; height:60%; background:#8d5b1f; border-radius:4px; }
-  .screwdriverGlow{ position:absolute; inset:-6%; border-radius:10px; box-shadow:0 0 0 0 rgba(255,213,77,.0); pointer-events:none; }
-  @keyframes ping { 0%{ box-shadow:0 0 0 0 rgba(255,213,77,.65) } 100%{ box-shadow:0 0 0 18px rgba(255,213,77,0) } }
   .screwdriverHint{ position:absolute; left:20%; bottom:14%; transform:translate(-10%,-140%); color:#fff; background:rgba(0,0,0,.45); padding:6px 8px; border-radius:8px; font-weight:700; font-size:.8rem; z-index:4; }
 
   .lock{
@@ -81,6 +79,7 @@
   .lock.ready{ cursor:pointer; outline:3px solid #ffd54d; }
   .lock .keyhole{ width:30%; height:38%; background:#222; border-radius:10px; position:relative; }
   .lock .keyhole::before{ content:""; position:absolute; left:50%; top:-28%; width:75%; height:55%; transform:translateX(-50%); border-radius:999px; border:6px solid #222; background:transparent; }
+  .lock.ok{ background:linear-gradient(180deg,#58d68d,#2eb85c); color:#fff; }
 
   .boy{
     position:absolute; left:10%; bottom:28%; width:22%; aspect-ratio:3/4; border-radius:10px;
@@ -89,14 +88,14 @@
   }
   @keyframes breathe{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-2px) } }
   .boy::after{ content:""; position:absolute; bottom:-6%; left:8%; width:84%; height:10%; border-radius:999px; background:rgba(0,0,0,.45); filter:blur(4px); }
-  /* simple face */
   .boyHead{ position:absolute; top:-18%; left:22%; width:36%; aspect-ratio:1; background:#ffccbc; border-radius:50%; box-shadow:0 2px 0 rgba(0,0,0,.15) inset; }
   .eye{ position:absolute; top:38%; width:14%; height:14%; background:#222; border-radius:50%; }
   .eye.l{ left:24% } .eye.r{ right:24% }
   .youTag{ position:absolute; top:-26%; left:8%; background:#fff; padding:3px 6px; border-radius:8px; font-size:.7rem; font-weight:800; box-shadow:var(--shadow); }
+  .bubble{ position:absolute; bottom:105%; left:10%; background:#fff; padding:6px 8px; border-radius:10px; font-weight:900; box-shadow:var(--shadow); display:none; }
+  .bubble.show{ display:block; animation:pop .2s ease forwards; }
 
   /* Backpack */
-  .ui{ display:flex; align-items:center; justify-content:space-between; margin:10px 0 0; }
   .backpack{
     display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:14px; background:#fff; box-shadow:var(--shadow);
     font-weight:700;
@@ -104,9 +103,7 @@
   .bpicon{ width:22px; height:22px; border-radius:6px; background:linear-gradient(180deg,#ffd54d,#ffb300); position:relative; }
   .bpicon::after{ content:""; position:absolute; inset:3px; border-radius:4px; background:var(--brand-red,.red); opacity:.9 }
   .bpitems{ display:flex; gap:6px; margin-left:6px; }
-  .bpitem{
-    width:22px; height:10px; border-radius:4px; background:linear-gradient(90deg,#cfa05b,#d8a25a 40%, #9ea6b1 70%, #cfd6e3); box-shadow:0 1px 3px rgba(0,0,0,.15);
-  }
+  .bpitem{ width:22px; height:10px; border-radius:4px; background:linear-gradient(90deg,#cfa05b,#d8a25a 40%, #9ea6b1 70%, #cfd6e3); box-shadow:0 1px 3px rgba(0,0,0,.15); }
 
   .toast{
     margin-left:auto; margin-right:auto; padding:10px 12px; background:#fff; border-radius:14px; box-shadow:var(--shadow);
@@ -114,12 +111,11 @@
   }
 
   /* Lockpick modal */
-  .overlay{ position:absolute; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; }
+  .overlay{ position:absolute; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:10; }
   .overlay.open{ display:flex; }
   .modal{
     width:min(520px,92vw); border-radius:18px; background:#fff; box-shadow:0 20px 50px rgba(0,0,0,.4);
-    padding:20px; display:flex; flex-direction:column; gap:12px; text-align:center;
-    animation:pop .25s ease forwards;
+    padding:20px; display:flex; flex-direction:column; gap:12px; text-align:center; animation:pop .25s ease forwards;
   }
   .meter{ height:14px; width:100%; border-radius:12px; background:#eee; overflow:hidden; box-shadow:inset 0 1px 3px rgba(0,0,0,.1); }
   .meter .fill{ height:100%; width:0%; background:linear-gradient(90deg,var(--brand-red),#ff6f00); transition:width .08s linear; }
@@ -129,13 +125,11 @@
     display:flex; align-items:center; justify-content:center; height:180px; border-radius:16px; background:#fff6e2; box-shadow:inset 0 0 0 3px #ffe08a;
     font-weight:900; font-size:1.2rem;
   }
-  .ok{ background:linear-gradient(180deg,#58d68d,#2eb85c); color:#fff; }
-  .success{
-    position:absolute; inset:0; display:none; align-items:center; justify-content:center; color:#fff; font-weight:900; font-size:1.3rem;
-  }
-  .success.show{ display:flex; background:rgba(46,184,92,.9); }
 
-  .controls { z-index:1 } /* keep intro buttons on top only during intro */
+  /* End screen (greyed) */
+  .endOverlay{ position:absolute; inset:0; background:rgba(0,0,0,.65); display:none; align-items:center; justify-content:center; z-index:20; }
+  .endOverlay.show{ display:flex; }
+  .endCard{ width:min(520px,92vw); border-radius:18px; background:#fff; box-shadow:0 20px 50px rgba(0,0,0,.5); padding:20px; text-align:center; }
 </style>
 </head>
 <body>
@@ -146,7 +140,6 @@
       <div class="brand" aria-hidden="true">
         <div class="mark"></div><div>MONDOBITES</div>
       </div>
-      <!-- Backpack HUD appears after intro -->
       <div class="backpack" id="backpack" style="display:none" aria-label="Backpack">
         <div class="bpicon"></div>
         <div>Bag</div>
@@ -154,7 +147,7 @@
       </div>
     </div>
 
-    <!-- Panel hosts either Intro or Level Scene -->
+    <!-- Panel hosts Intro or Scene -->
     <div class="panel" id="panel">
       <!-- INTRO CARD -->
       <div class="card" id="card">
@@ -165,7 +158,6 @@
       </div>
     </div>
 
-    <!-- Intro controls -->
     <div class="controls" id="introControls">
       <button class="ghost" id="skipBtn" aria-label="Skip intro">Skip</button>
       <button class="primary" id="nextBtn" aria-label="Next">Next</button>
@@ -217,7 +209,6 @@ function renderSlide(idx){
   $line.textContent = s.text;
   $bar.style.width = ((idx+1)/slides.length*100).toFixed(1) + '%';
   $next.textContent = s.cta || "Next";
-  // re-pop anim
   $card.style.animation = 'none'; void $card.offsetWidth; $card.style.animation = '';
 }
 function nextSlide(){
@@ -226,7 +217,6 @@ function nextSlide(){
 }
 function skipIntro(){ slideIndex = slides.length - 1; renderSlide(slideIndex); }
 function startGame(){
-  // Swap panel to scene
   $introControls.remove();
   $panel.innerHTML = levelSceneHtml();
   $backpack.style.display = 'flex';
@@ -234,34 +224,32 @@ function startGame(){
 }
 
 /* -------------------------
-   LEVEL 01: Escape the Cage
+   LEVEL 01
 --------------------------*/
 function levelSceneHtml(){
   return `
   <div class="scene" id="scene" aria-label="Level 01: Escape the Cage">
     <div class="bg"></div>
-
-    <!-- Put floor FIRST so other items can sit above it -->
     <div class="floor"></div>
 
-    <div class="gate" aria-hidden="true">
+    <div class="gate" id="gate" aria-hidden="true">
       <div class="gateBar"></div><div class="gateBar"></div><div class="gateBar"></div>
       <div class="gateBar"></div><div class="gateBar"></div><div class="gateBar"></div>
     </div>
 
-    <div class="boy" title="You">
+    <div class="boy" id="boy" title="You">
       <div class="boyHead"></div>
       <div class="eye l"></div><div class="eye r"></div>
       <div class="youTag">You</div>
+      <div class="bubble" id="bubble">Hurra!</div>
     </div>
 
-    <div class="screwdriver" id="screwdriver" title="Screwdriver">
-      <div class="screwdriverGlow" style="animation: ping 1.4s infinite;"></div>
-    </div>
-    <div class="screwdriverHint">Tap to pick</div>
+    <div class="screwdriver" id="screwdriver" title="Screwdriver"></div>
+    <div class="screwdriverHint" id="screwdriverHint">Tap to pick</div>
 
     <div class="lock" id="lock" title="Cage Lock"><div class="keyhole"></div></div>
 
+    <!-- Lockpick modal (z-index:10) -->
     <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Lockpick">
       <div class="modal">
         <div style="font-weight:900; font-size:1.1rem;">Unlock the cage!</div>
@@ -272,7 +260,14 @@ function levelSceneHtml(){
       </div>
     </div>
 
-    <div class="success" id="successMsg">Unlocked! Level Complete 🎉</div>
+    <!-- End screen (z-index:20; always above) -->
+    <div class="endOverlay" id="endOverlay">
+      <div class="endCard">
+        <div style="font-weight:900; font-size:1.25rem; margin-bottom:6px;">Level Complete!</div>
+        <div id="timeResult" style="opacity:.8; margin-bottom:14px;">Time: – s</div>
+        <button class="primary" id="restartBtn">Restart</button>
+      </div>
+    </div>
   </div>`;
 }
 
@@ -283,20 +278,34 @@ const game = {
   target: 30,
   decayPerSecond: 3.6,
   lastTick: 0,
-  raf: null
+  raf: null,
+  startTime: 0,
+  endTime: 0
 };
 
 function setupLevel01(){
+  const gate = document.getElementById('gate');
   const lock = document.getElementById('lock');
   const screwdriver = document.getElementById('screwdriver');
-  const screwdriverHint = document.querySelector('.screwdriverHint');
+  const screwdriverHint = document.getElementById('screwdriverHint');
+  const bubble = document.getElementById('bubble');
+  const boy = document.getElementById('boy');
+
   const overlay = document.getElementById('overlay');
   const tapZone = document.getElementById('tapZone');
   const fill = document.getElementById('meterFill');
   const cancelBtn = document.getElementById('cancelPick');
-  const successMsg = document.getElementById('successMsg');
 
+  const endOverlay = document.getElementById('endOverlay');
+  const restartBtn = document.getElementById('restartBtn');
+  const timeResult = document.getElementById('timeResult');
+
+  game.inventory.clear();
+  game.state = 'explore';
+  game.progress = 0;
+  renderBackpack();
   toast("Pick up the screwdriver.");
+  game.startTime = performance.now();
 
   function pickup(e){
     e.preventDefault?.();
@@ -319,12 +328,6 @@ function setupLevel01(){
     e.preventDefault?.();
     if (!game.inventory.has('screwdriver')) { bounce(lock); toast("You need a tool…"); return; }
     if (game.state === 'won') return;
-    openLockpick();
-  }
-  lock.addEventListener('click', tryLockpick);
-  lock.addEventListener('touchstart', tryLockpick, {passive:true});
-
-  function openLockpick(){
     overlay.classList.add('open');
     game.state = 'lockpick';
     game.progress = Math.max(0, Math.floor(game.progress));
@@ -332,6 +335,8 @@ function setupLevel01(){
     game.lastTick = performance.now();
     loop();
   }
+  lock.addEventListener('click', tryLockpick);
+  lock.addEventListener('touchstart', tryLockpick, {passive:true});
 
   function loop(now){
     if (game.state !== 'lockpick') return;
@@ -358,22 +363,47 @@ function setupLevel01(){
   tapZone.addEventListener('click', handleTap);
   tapZone.addEventListener('touchstart', handleTap, {passive:false});
 
-  function win(){
-    cancelAnimationFrame(game.raf);
-    game.state = 'won';
-    overlay.classList.remove('open');
-    lock.classList.remove('ready');
-    lock.classList.add('ok');
-    lock.innerHTML = '<div style="font-weight:900;">OPEN</div>';
-    successMsg.classList.add('show');
-    toast("Door open! You escaped.");
-    // -> Load Level 02 here.
-  }
-
   cancelBtn.addEventListener('click', ()=>{
     cancelAnimationFrame(game.raf);
     overlay.classList.remove('open');
     game.state = 'explore';
+  });
+
+  function win(){
+    cancelAnimationFrame(game.raf);
+    overlay.classList.remove('open');
+
+    // 1) Visualize open lock
+    lock.classList.remove('ready');
+    lock.classList.add('ok');
+    lock.innerHTML = '<div style="font-weight:900;">OPEN</div>';
+
+    // 2) Gate fades
+    gate.classList.add('open');
+
+    // 3) Happy boy rushes out with "Hurra!"
+    bubble.classList.add('show');
+    boy.style.animation = 'none';
+    boy.animate(
+      [{transform:'translateX(0)'},
+       {transform:'translateX(40vw)'}],
+      {duration:800, easing:'cubic-bezier(.2,.8,.2,1)', fill:'forwards'}
+    );
+
+    // 4) Measure time and show end screen
+    game.state = 'won';
+    game.endTime = performance.now();
+    const secs = ((game.endTime - game.startTime)/1000).toFixed(2);
+    timeResult.textContent = `Time: ${secs} s`;
+
+    // delay a moment so the rush-out animation is visible
+    setTimeout(()=> endOverlay.classList.add('show'), 850);
+  }
+
+  restartBtn.addEventListener('click', ()=>{
+    // Rebuild scene cleanly
+    $panel.innerHTML = levelSceneHtml();
+    setupLevel01();
   });
 
   // helpers
@@ -391,7 +421,7 @@ function renderBackpack(){
   }
 }
 
-/* Tiny toast */
+/* Tiny toast (under brand) */
 let toastEl;
 function toast(msg){
   if (!toastEl){
